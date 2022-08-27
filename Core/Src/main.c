@@ -55,7 +55,7 @@ static void MX_GPIO_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-extern USBD_HandleTypeDef hUsbDeviceFS;
+extern USBD_HandleTypeDef hUsbDeviceFS; //variavel de outro arquivo por isso tem o extern
 typedef struct
 {
 	uint8_t MODIFIER;
@@ -113,12 +113,56 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  keyboardhid.KEYCODE1 = 0x04; // tecla letra a pressionada
-	  USBD_HID_SendReport(&hUsbDeviceFS, &keyboardhid, sizeof(keyboardhid)); //Envia o report
-	  HAL_Delay(50); //delay
-	  keyboardhid.KEYCODE1 = 0x00;// nenhuma tecla pressionada
-	  USBD_HID_SendReport(&hUsbDeviceFS, &keyboardhid, sizeof(keyboardhid));
-	  HAL_Delay(1000);
+
+	  if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == 0 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14) == 1 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_12) == 1 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13) == 1){
+		  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_8, 1);
+		  	  keyboardhid.KEYCODE1 = 79; // right key
+		 	  USBD_HID_SendReport(&hUsbDeviceFS, &keyboardhid, sizeof(keyboardhid)); // envia o report criado
+		 	  HAL_Delay(50);
+		 	  keyboardhid.KEYCODE1 = 0x00;// nenhuma tecla pressionada, caso soltar a tecla
+		 	  USBD_HID_SendReport(&hUsbDeviceFS, &keyboardhid, sizeof(keyboardhid));
+		 	  HAL_Delay(10);
+		 	 HAL_GPIO_WritePin(GPIOA,GPIO_PIN_8, 0);
+
+	  }
+
+	 if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14) == 0 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == 1 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_12) == 1 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13) == 1){
+	  	  keyboardhid.KEYCODE1 = 80; // left key
+	 	  USBD_HID_SendReport(&hUsbDeviceFS, &keyboardhid, sizeof(keyboardhid)); // envia o report criado
+
+	 	  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_9, 1);
+
+	 	  HAL_Delay(50);
+	 	  keyboardhid.KEYCODE1 = 0x00;// nenhuma tecla pressionada, caso soltar a tecla
+	 	  USBD_HID_SendReport(&hUsbDeviceFS, &keyboardhid, sizeof(keyboardhid));
+	 	  HAL_Delay(10);
+	 	  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_9, 0);
+  }
+
+	 if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_12) == 0 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13) == 1  && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14) == 1 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == 1){
+	 		  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_8, 1);
+	 		  	  keyboardhid.KEYCODE1 = 81; // up key
+	 		 	  USBD_HID_SendReport(&hUsbDeviceFS, &keyboardhid, sizeof(keyboardhid)); // envia o report criado
+	 		 	  HAL_Delay(50);
+	 		 	  keyboardhid.KEYCODE1 = 0x00;// nenhuma tecla pressionada, caso soltar a tecla
+	 		 	  USBD_HID_SendReport(&hUsbDeviceFS, &keyboardhid, sizeof(keyboardhid));
+	 		 	  HAL_Delay(10);
+	 		 	 HAL_GPIO_WritePin(GPIOA,GPIO_PIN_8, 0);
+
+	 	  }
+
+	 	 if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13) == 0 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_12) == 1 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14) == 1 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == 1){
+	 	  	  keyboardhid.KEYCODE1 = 82; // down key
+	 	 	  USBD_HID_SendReport(&hUsbDeviceFS, &keyboardhid, sizeof(keyboardhid)); // envia o report criado
+
+	 	 	  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_9, 1);
+
+	 	 	  HAL_Delay(50);
+	 	 	  keyboardhid.KEYCODE1 = 0x00;// nenhuma tecla pressionada, caso soltar a tecla
+	 	 	  USBD_HID_SendReport(&hUsbDeviceFS, &keyboardhid, sizeof(keyboardhid));
+	 	 	  HAL_Delay(10);
+	 	 	  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_9, 0);
+	   }
 
 
   }
@@ -177,10 +221,28 @@ void SystemClock_Config(void)
   */
 static void MX_GPIO_Init(void)
 {
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOD_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_RESET);
+
+  /*Configure GPIO pins : PB12 PB13 PB14 PB15 */
+  GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PA8 PA9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_9;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 }
 
