@@ -19,6 +19,13 @@ void function(); <br />
 while (1) <br />
 { <br />
 //Here comes the code that´s gonna work in loop <br />
+
+ /* USER CODE BEGIN 3 */ <br />
+ 
+ //If you are using STM32 as a HID(Human Interface Device) you should put your code that is going to repeat inside this tag <br />
+ 
+  /* USER CODE END 3 */ <br />
+
 <br />
  /* USER CODE END WHILE */ <br />
  <br />
