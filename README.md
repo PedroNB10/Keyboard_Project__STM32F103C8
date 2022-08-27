@@ -1,5 +1,10 @@
 # Keyboard_Project__STM32F103C8
 
+===============   Observations   ===============
+In case you change the .ioc MX, the usbd_hid.c and usbd_hid.h  in this local : \Keyboard_Project__STM32F103C8\Middlewares\ST\STM32_USB_Device_Library\Class\HID\Src
+
+and this \Keyboard_Project__STM32F103C8\Middlewares\ST\STM32_USB_Device_Library\Class\HID\Inc respectively, are going to regenrate the standard code, and you are going to miss every configuration you have made in this two places.
+
 ===============   Important places to code in .main   ===============
 <br />
 
